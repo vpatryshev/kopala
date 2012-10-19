@@ -3,11 +3,11 @@ package kopala
 import javax.servlet.http._
 import java.io.PrintWriter
 import scala.collection.JavaConversions._
-import javax.management.remote.rmi._RMIConnection_Stub
 import transport.ViaActor
 
 class Sample extends HttpServlet {
   var processor: (Any => String => String) = null
+  println(Sample.actor)
 
   def asStr(x: Any) = x match {
     case arr: Array[String] => arr.mkString
@@ -19,8 +19,6 @@ class Sample extends HttpServlet {
     val out:PrintWriter = res.getWriter()
     if (processor == null) {
       out.print("Hello!<br/>" + mapAsScalaMap(req.getParameterMap).mapValues(asStr(_)))
-      out.print("<hr>")
-      out.print(Sample.messages)
     } else {
       out.print(processor(mapAsScalaMap(req.getParameterMap)))
     }
@@ -28,7 +26,6 @@ class Sample extends HttpServlet {
 }
 
 object Sample {
-  val actor = new ViaActor(8721)
+  val actor = new ViaActor(8722)
   actor.start()
-  def messages = actor.msgs.mkString("<br/>")
 }

@@ -10,7 +10,7 @@
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" inherit-compiler-output="false">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
@@ -25,6 +25,9 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.scala-tools.testing:specs_2.9.2:1.6.9" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
     <orderEntry type="library" name="Maven: org.mozilla:rhino:1.7R3" level="project" />
+    <orderEntry type="library" name="Maven: org.scalaz:scalaz-core_2.9.2:7.0.0-M3" level="project" />
+    <orderEntry type="library" name="Maven: org.scalaz:scalaz-effect_2.9.2:7.0.0-M3" level="project" />
+    <orderEntry type="library" name="Maven: org.scalaz:scalaz-concurrent_2.9.2:7.0.0-M3" level="project" />
   </component>
 </module>
 

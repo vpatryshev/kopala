@@ -1,35 +1,44 @@
 package kopala.transport
 
-import java.io.FileOutputStream
 import scala.actors.Actor
 
 import scala.actors.remote.RemoteActor._
-import collection.mutable.ArrayBuffer
+import kopala.js.Kopala
+import java.io.{PrintWriter, StringWriter}
 
 class ViaActor(myPort: Int) extends Actor {
-  val msgs = new ArrayBuffer[String]
-  def log(m: Any) {
-    msgs += new java.util.Date() + "] " + m
-  }
+  val kopala = new Kopala
+  def log(x: Any) { println(x) }
 
-  var msgno: Int = 0
+  def log(msg: String, e: Exception) {
+    val stack = new StringWriter
+    e.printStackTrace(new PrintWriter(stack))
+    log(msg + " " + e + "\n" + stack)
+  }
 
   def act() {
     alive(myPort)
     register('kopala, this)
+
     loopWhile(true) {
-      react {
-        case msg => {
-          log(msg)
-                    reply((msgno, new java.util.Date(), msg))
-          try {
-            sender ! (msgno, msg, "received at", new java.util.Date)
-          } catch {
-            case e: Exception => println(e)
-          }
-        }
-      }
+      react { case msg: String => reply(exec(msg)) }
     }
   }
 
+  def exec(msg: String) = {
+    val out = new StringWriter()
+    try {
+      log("Got message " + msg)
+      val result = kopala(msg, out)
+      log("got result " + result)
+      val dump = out.toString
+      log("got dump " + dump)
+      Right(result, dump)
+    } catch {
+      case e: Exception => {
+        log("oops,", e)
+        Left(e, out.toString)
+      }
+    }
+  }
 }

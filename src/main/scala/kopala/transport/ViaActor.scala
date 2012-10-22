@@ -5,6 +5,7 @@ import scala.actors.Actor
 import scala.actors.remote.RemoteActor._
 import kopala.js.Kopala
 import java.io.{PrintWriter, StringWriter}
+import org.mozilla.javascript.EcmaError
 
 class ViaActor(myPort: Int) extends Actor {
   val kopala = new Kopala
@@ -21,7 +22,7 @@ class ViaActor(myPort: Int) extends Actor {
     register('kopala, this)
 
     loopWhile(true) {
-      react { case msg: String => reply(exec(msg)) }
+      react { case msg: String => { println("Got a " + msg); reply(exec(msg))} }
     }
   }
 
@@ -35,9 +36,13 @@ class ViaActor(myPort: Int) extends Actor {
       log("got dump " + dump)
       Right(result, dump)
     } catch {
+      case ee: EcmaError => {
+        log("oops: " + ee.getErrorMessage)
+        Left(ee.getErrorMessage, out.toString)
+      }
       case e: Exception => {
         log("oops,", e)
-        Left(e, out.toString)
+        Left(e.getMessage, out.toString)
       }
     }
   }

@@ -10,9 +10,19 @@
     <load-on-startup>2</load-on-startup>
   </servlet>
 
+  <servlet>
+    <servlet-name>kopala</servlet-name>
+    <servlet-class>kopala.transport.ViaServlet</servlet-class>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+
   <servlet-mapping>
     <servlet-name>sample</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
 
+  <servlet-mapping>
+      <servlet-name>kopala</servlet-name>
+      <url-pattern>/k</url-pattern>
+    </servlet-mapping>
 </web-app>

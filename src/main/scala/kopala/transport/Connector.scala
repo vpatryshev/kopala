@@ -6,12 +6,12 @@ import org.mozilla.javascript.{EvaluatorException, EcmaError}
 import io.Source
 import scala.Left
 import scala.Right
+import kopala.logging.Logging
 
-trait Connector {
+trait Connector extends Logging {
   val kopala = new Kopala{}
-  def log(x: Any) { println(x) }
 
-  def log(msg: String, e: Exception) {
+  def log(msg: String, e: Exception): Unit = {
     val stack = new StringWriter
     e.printStackTrace(new PrintWriter(stack))
     log(msg + " " + e + "\n" + stack)
@@ -41,7 +41,9 @@ trait Connector {
     }
   }
 
-  def pipe(in: Source, out: Writer, err: Writer, prompt: String = ">") {
+  def pipe(in: Source, out: Writer): Unit = pipe(in, out, out, "")
+
+  def pipe(in: Source, out: Writer, err: Writer, prompt: String = ">"): Unit = {
     val p = new PrintWriter(out)
     val e = new PrintWriter(err)
     def ping = {

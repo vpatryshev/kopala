@@ -1,11 +1,10 @@
 package kopala.transport
 
-import io.Source
-import java.io.{OutputStreamWriter, OutputStream, InputStream}
+import java.io.{OutputStream, InputStream}
 import kopala.Obvious._
+import kopala.logging.SimpleLogging
 
-object ViaPipe extends Connector {
-  def apply(in: InputStream = System.in, out: OutputStream = System.out, err: OutputStream = System.err) {
-    pipe(in, out, err, ">")
-  }
+object ViaPipe extends Connector with SimpleLogging {
+  def apply(in: InputStream, out: OutputStream, err: OutputStream): Unit = pipe(in, out, err, ">")
+  def apply(in: InputStream = System.in, out: OutputStream = System.out): Unit = apply(in, out, out)
 }

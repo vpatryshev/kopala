@@ -6,8 +6,9 @@ import scala.actors.remote.RemoteActor._
 import kopala.js.Kopala
 import java.io.{PrintWriter, StringWriter}
 import org.mozilla.javascript.EcmaError
+import kopala.logging.SimpleLogging
 
-class ViaActor(myPort: Int = 8722) extends Connector with Actor {
+class ViaActor(myPort: Int = 8722) extends Connector with Actor with SimpleLogging {
 
   def act() {
     alive(myPort)

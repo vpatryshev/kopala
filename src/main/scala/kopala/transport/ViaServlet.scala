@@ -1,5 +1,7 @@
 package kopala.transport
 
+import kopala.Obvious._
+
 import javax.servlet.http.{HttpServletResponse, HttpServletRequest, HttpServlet}
 
 class ViaServlet extends HttpServlet with Connector {

@@ -2,7 +2,7 @@ package kopala.transport
 
 import kopala.js.Kopala
 import java.io._
-import org.mozilla.javascript.EcmaError
+import org.mozilla.javascript.{EvaluatorException, EcmaError}
 import io.Source
 import scala.Left
 import scala.Right
@@ -20,9 +20,8 @@ trait Connector {
   def exec(msg: String) = {
     val out = new StringWriter()
     try {
-      log("Got message " + msg)
       val result = kopala(msg, out)
-      log("got result (" + result.getClass + "): " + result)
+//      log("got result (" + result.getClass + "): " + result)
       val dump = out.toString
       //      log("got dump " + dump)
       Right(result, dump)
@@ -31,6 +30,10 @@ trait Connector {
         log("oops: " + ee.getErrorMessage)
         Left(ee.getErrorMessage, out.toString)
       }
+      case eve: EvaluatorException => {
+        log("oops: " + eve.getMessage)
+        Left((eve.getMessage, out.toString))
+      }
       case e: Exception => {
         log("oops,", e)
         Left(e.getMessage, out.toString)
@@ -38,20 +41,23 @@ trait Connector {
     }
   }
 
-  def pipe(in: Source, out: Writer, err: Writer) {
+  def pipe(in: Source, out: Writer, err: Writer, prompt: String = ">") {
     val p = new PrintWriter(out)
     val e = new PrintWriter(err)
+    def ping = {
+      p.print(prompt)
+      p.flush
+    }
+
+    def println(s: String) = if (!s.isEmpty) p.println(s)
+    ping
     in.getLines.zipWithIndex foreach { case (line, number) =>
       exec(line) match {
-        case Left((errorMsg, dump)) => {p.println(dump); e.println("Line " + number + ":" + errorMsg) }
-        case Right((result,  dump)) => {p.println(dump); p.println(result) }
+        case Left((errorMsg, dump)) => {println(dump); e.println("Line " + number + ":" + errorMsg) }
+        case Right((result,  dump)) => {println(dump); println(result) }
       }
-      p.print(">")
+      ping
     }
-  }
-
-  def pipe(in: InputStream, out: OutputStream, err: OutputStream) {
-    pipe(Source.fromInputStream(in), new OutputStreamWriter(out), new OutputStreamWriter(err))
   }
 
 }

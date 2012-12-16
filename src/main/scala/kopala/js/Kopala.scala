@@ -7,8 +7,7 @@ import org.mozilla.javascript._
 import java.io._
 import collection.immutable.Map
 import kopala.js.Adapter._
-import instrument.ClassFileTransformer
-import java.security.ProtectionDomain
+import kopala.Obvious._
 import java.io.Writer
 import java.io.Reader
 
@@ -59,7 +58,7 @@ trait Kopala extends ImporterTopLevel {
       case javaMap: java.util.Map[_, _] => asString(mapAsScalaMap(javaMap))
       case map: Map[_, _]               => map mapValues asString toString
       case x: NativeJavaObject          => x.toString
-      case _: Undefined                 => "Undefined"
+      case _: Undefined                 => ""
       case y => "" + y
     }
   }
@@ -111,9 +110,7 @@ trait Kopala extends ImporterTopLevel {
 
   def apply(in: Reader, filename: String): String = apply(in, filename, devNull)
 
-  def apply(script: String, out: Writer): String = apply(new StringReader(script), "", out)
-
-  def apply(script: String): String = apply(new StringReader(script), "", devNull)
+  def apply(script: String, out: Writer = devNull): String = apply(script, "", out)
 
   apply(new InputStreamReader(getClass.getResourceAsStream("/kopala.js")), "kopala.js")
 }

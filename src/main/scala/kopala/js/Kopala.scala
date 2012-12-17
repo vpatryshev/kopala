@@ -58,7 +58,7 @@ trait Kopala extends ImporterTopLevel {
       case javaMap: java.util.Map[_, _] => asString(mapAsScalaMap(javaMap))
       case map: Map[_, _]               => map mapValues asString toString
       case x: NativeJavaObject          => x.toString
-      case _: Undefined                 => ""
+      case _: Undefined                 => "()"
       case y => "" + y
     }
   }

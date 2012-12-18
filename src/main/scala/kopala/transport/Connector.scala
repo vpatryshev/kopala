@@ -6,10 +6,10 @@ import org.mozilla.javascript.{EvaluatorException, EcmaError}
 import io.Source
 import scala.Left
 import scala.Right
-import kopala.logging.Logging
+import kopala.logging.{Logger, Logging}
 
-trait Connector extends Logging {
-  val kopala = new Kopala{}
+trait Connector extends Logger { self =>
+  val kopala = new { val logger = self } with Kopala
 
   def log(msg: String, e: Exception): Unit = {
     val stack = new StringWriter

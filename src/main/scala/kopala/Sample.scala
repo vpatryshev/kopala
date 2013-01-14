@@ -1,37 +1,50 @@
 package kopala
 
 import javax.servlet.http._
-import java.io.{Serializable, ByteArrayOutputStream, PrintWriter}
+import java.io.PrintWriter
 import scala.collection.JavaConversions._
 import transport.ViaActor
+import javax.servlet.ServletConfig
 
 class Sample extends HttpServlet {
-  val st = java.util.Arrays.asList(Thread.currentThread.getStackTrace)
+  val st = Thread.currentThread.getStackTrace
+
+  {
+    def actor(port: Int = 8722) = new ViaActor(port)
+    try {
+      actor().start()
+    } catch {
+      case x => println("Oh shit: " + x + " - while starting the plugin")
+    }
+  }
 
   var processor: (Any => String => String) = null
-  println(Sample.actor())
 
   def asStr(x: Any) = x match {
     case arr: Array[String] => arr.mkString
     case _                  => x.toString
   }
 
-  override def doGet(req : HttpServletRequest, res : HttpServletResponse) {
-    res.setContentType("text/html")
+  case class Response(res: HttpServletResponse) {
     val out:PrintWriter = res.getWriter
-    if (processor == null) {
-      out.print("Hello!<br/>" + mapAsScalaMap(req.getParameterMap).mapValues(asStr(_)))
-      out.print("<br/>" + this)
-      out.print("<br/>" + getClass.getClassLoader)
-      out.print("<br/>" + st)
+    def << (x: Any) = { out print x; this }
+  }
 
+  override def doGet(req : HttpServletRequest, res : HttpServletResponse) {
+
+    res.setContentType("text/html")
+    val out = Response(res)
+    if (processor == null) {
+      out << "Hello!<br/>" << mapAsScalaMap(req.getParameterMap).mapValues(asStr(_))
+      out << "<br/><br/><code>this = " << this
+      out << "<br/><br/>" << getClass.getClassLoader
+      out << "<br/><br/>" << Thread.currentThread.getId
+      out << "<br/><br/>st=" << st
+      out << "<br/><ol><li>" << (st.toList mkString("</li><li>"))
+      out << "</li></ol></code></br>"
+      out << getServletConfig.getServletContext//.addServlet
     } else {
-      out.print(processor(mapAsScalaMap(req.getParameterMap)))
+      out << processor(mapAsScalaMap(req.getParameterMap))
     }
   }
-}
-
-object Sample {
-  def actor(port: Int = 8722) = new ViaActor(port)
-  actor().start()
 }

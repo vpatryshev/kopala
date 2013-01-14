@@ -15,7 +15,7 @@ class ViaActor(myPort: Int = 8722) extends Connector with Actor with SimpleLoggi
     register('kopala, this)
 
     loopWhile(true) {
-      react { case msg: String => { println("Got a " + msg); reply(exec(msg))} }
+      react { case msg: String => { println("<<< " + msg); reply(exec(msg))} }
     }
   }
 }

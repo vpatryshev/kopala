@@ -21,7 +21,7 @@ trait Connector extends Logger { self =>
     val out = new StringWriter()
     try {
       val result = kopala(msg, out)
-//      log("got result (" + result.getClass + "): " + result)
+            log("got result (" + result.getClass + "): " + result)
       val dump = out.toString
       //      log("got dump " + dump)
       Right(result, dump)

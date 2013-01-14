@@ -1,0 +1,8 @@
+import scala.actors.remote.RemoteActor._; import scala.actors.remote._
+val rcr = select(Node("172.16.0.4", 8722), 'kopala)
+rcr !? "this"
+rcr !? "var sts = java.lang.Thread.getAllStackTraces()"
+rcr !? "var threads = sts.keySet()"
+rcr !? "var tmb = java.lang.management.ManagementFactory.getThreadMXBean()"
+rcr !? "var tids = tmb.getAllThreadIds()"
+rcr !? "asJS(tids)"

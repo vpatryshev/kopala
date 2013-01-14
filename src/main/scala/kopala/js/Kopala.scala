@@ -57,7 +57,7 @@ trait Kopala extends ImporterTopLevel with Logging {
 //    println("asString(" + Option(x).map(_.getClass) + ":" + x + ")")
     x match {
       case a: Array[_]                  => a map asString toString
-      case javaCollection: java.util.Collection[_] => javaCollection toString
+      case javaCollection: java.util.Collection[_] => javaCollection map asString toString
       case seq: Seq[_]                  => seq map asString toString
       case javaMap: java.util.Map[_, _] => asString(mapAsScalaMap(javaMap))
       case map: Map[_, _]               => map mapValues asString toString

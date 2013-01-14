@@ -8,11 +8,20 @@ trait SimpleLogger extends Logger {
   override def log(message: String) = println(message)
 }
 
+object STDOUT extends SimpleLogger{}
+
 trait Logging {
   val logger: Logger
-  def log(message: String) = Option(logger).foreach(_.log(message))
+
+  def log(message: String) = {
+    try {
+      logger.log(message)
+    } catch {
+      case x => STDOUT.log(message)
+    }
+  }
 }
 
 trait SimpleLogging extends Logging {
-  val logger = new SimpleLogger{}
+  val logger = STDOUT
 }
